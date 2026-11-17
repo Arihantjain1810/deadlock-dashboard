@@ -174,7 +174,7 @@ section[data-testid="stSidebar"] .stButton{margin-bottom:-.6rem}
 </style>""", unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown('<div class="brand">Deadlock Lab</div><div class="brand-sub">Operating Systems · Div A</div>', unsafe_allow_html=True)
+    st.markdown('<div class="brand">Deadlock </div><div class="brand-sub">Operating Systems </div>', unsafe_allow_html=True)
     for sec, items in NAV:
         st.markdown(f'<div class="nav-sec">{sec}</div>', unsafe_allow_html=True)
         for label, icon in items:
