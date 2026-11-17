@@ -150,15 +150,43 @@ if "last" not in st.session_state: st.session_state.last = "No simulation yet"
 if "ver" not in st.session_state: st.session_state.ver = 0
 cfg = st.session_state.cfg
 
-MODULES = ["Overview Dashboard", "System Configuration", "Banker's Algorithm", "Resource Request Simulator",
-           "Deadlock Detection", "Deadlock Prevention", "Test Lab", "Concepts and Learning", "Responsible AI Usage"]
+NAV = [
+    ("WORKSPACE", [("Overview Dashboard", "dashboard"), ("System Configuration", "tune")]),
+    ("ALGORITHMS", [("Banker's Algorithm", "account_balance"), ("Resource Request Simulator", "swap_horiz"),
+                    ("Deadlock Detection", "search"), ("Deadlock Prevention", "shield")]),
+    ("EVALUATION", [("Test Lab", "science")]),
+    ("LEARN", [("Concepts and Learning", "menu_book"), ("Responsible AI Usage", "smart_toy")]),
+    ("ABOUT", [("About the Project", "groups")]),
+]
+if "page" not in st.session_state: st.session_state.page = "Overview Dashboard"
+
+st.markdown("""
+<style>
+section[data-testid="stSidebar"] .stButton > button{justify-content:flex-start;text-align:left;border:none;background:transparent;box-shadow:none;
+  padding:.42rem .75rem;border-radius:8px;font-weight:400;color:inherit}
+section[data-testid="stSidebar"] .stButton > button:hover{background:rgba(128,128,128,.16)}
+section[data-testid="stSidebar"] .stButton > button[kind="primary"],
+section[data-testid="stSidebar"] .stButton > button[data-testid="stBaseButton-primary"]{background:rgba(128,128,128,.24);font-weight:600;color:inherit}
+section[data-testid="stSidebar"] .stButton{margin-bottom:-.6rem}
+.nav-sec{font-size:.72rem;letter-spacing:.08em;opacity:.55;margin:1.1rem 0 .35rem .4rem;font-weight:600}
+.brand{font-size:1.15rem;font-weight:700;margin:.2rem 0 0 .3rem}
+.brand-sub{font-size:.8rem;opacity:.6;margin:0 0 .4rem .3rem}
+</style>""", unsafe_allow_html=True)
+
 with st.sidebar:
-    page = st.radio("Simulation modules", MODULES)
+    st.markdown('<div class="brand">Deadlock Lab</div><div class="brand-sub">Operating Systems · Div A</div>', unsafe_allow_html=True)
+    for sec, items in NAV:
+        st.markdown(f'<div class="nav-sec">{sec}</div>', unsafe_allow_html=True)
+        for label, icon in items:
+            if st.button(label, key=f"nav_{label}", icon=f":material/{icon}:", use_container_width=True,
+                         type="primary" if st.session_state.page == label else "secondary"):
+                st.session_state.page = label; st.rerun()
     st.divider()
     st.caption("Latest simulation outcome")
     st.info(st.session_state.last)
-    if st.button("Reset to classic example"):
+    if st.button("Reset to classic example", icon=":material/restart_alt:", use_container_width=True):
         st.session_state.cfg = copy.deepcopy(CLASSIC); st.session_state.ver += 1; note("Reset to classic example"); st.rerun()
+page = st.session_state.page
 
 st.title("Deadlock Analysis & Resource Allocation")
 st.caption("Operating Systems simulation laboratory")
@@ -349,3 +377,18 @@ elif page == "Responsible AI Usage":
                        "Output generated": ["", "", ""], "Student verification": ["", "", ""]})
     out = st.data_editor(df, num_rows="dynamic", hide_index=True, use_container_width=True)
     st.download_button("Download record as CSV", out.to_csv(index=False), "ai_usage_record.csv")
+
+elif page == "About the Project":
+    st.header("About the project")
+    st.write("An interactive Operating Systems lab for deadlock handling: Banker's Algorithm (avoidance), deadlock detection with recovery, and deadlock prevention, with a reproducible Test Lab for TC1 to TC6.")
+    st.subheader("Team members")
+    team = [("Arihant Jain", "202401040257", "61"), ("Soham Khore", "202401040267", "67"), ("Pratham Patel", "202401040268", "68")]
+    for col, (nm, prn, roll) in zip(st.columns(3), team):
+        with col, st.container(border=True):
+            st.markdown(f"**{nm}**")
+            st.caption(f"PRN {prn}")
+            st.caption(f"Roll No. {roll} · Div A")
+    st.subheader("Course details")
+    st.write("Operating Systems · Activity 2: AI-Assisted Dashboard Development and Deadlock Analysis")
+    st.subheader("Built with")
+    st.write("Python, Streamlit and pandas. AI assistance is documented under Responsible AI Usage.")
